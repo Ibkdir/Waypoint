@@ -15,6 +15,16 @@ import { AIMessage } from "~/AI/message";
 
 const STREAM_UI_RUN_NAME = "stream_runnable_ui";
 
+type StreamEventOutput = {
+  value: ReactNode;
+  [key: string]: unknown;
+};
+
+type StreamEventChunk = {
+  text: string;
+  [key: string]: unknown;
+};
+
 /**
  * Executes `streamEvents` method on a runnable
  * and converts the generator to a RSC friendly stream
@@ -48,14 +58,15 @@ export function streamRunnableUI<RunInput, RunOutput>(
         streamEvent.name === STREAM_UI_RUN_NAME &&
         streamEvent.event === "on_chain_end"
       ) {
-        if (isValidElement(streamEvent.data.output.value)) {
-          ui.append(streamEvent.data.output.value);
+        const StreamOutput = streamEvent.data.output as StreamEventOutput
+        if (isValidElement(StreamOutput.value)) {
+          ui.append(StreamOutput.value);
         }
       }
 
       const [kind, type] = streamEvent.event.split("_").slice(1);
       if (type === "stream" && kind !== "chain") {
-        const chunk = streamEvent.data.chunk;
+        const chunk = streamEvent.data.chunk as Partial<StreamEventChunk>;
         if ("text" in chunk && typeof chunk.text === "string") {
           if (!callbacks[streamEvent.run_id]) {
             // the createStreamableValue / useStreamableValue is preferred
@@ -66,7 +77,7 @@ export function streamRunnableUI<RunInput, RunOutput>(
             callbacks[streamEvent.run_id] = textStream;
           }
 
-          callbacks[streamEvent.run_id]!.append(chunk.text);
+          callbacks[streamEvent.run_id]?.append(chunk.text);
         }
       }
 
@@ -75,7 +86,7 @@ export function streamRunnableUI<RunInput, RunOutput>(
 
     // resolve the promise, which will be sent
     // to the client thanks to RSC
-    resolve(lastEventValue?.data.output);
+    resolve(lastEventValue?.data.output as string);
 
     Object.values(callbacks).forEach((cb) => cb.done());
     ui.done();
