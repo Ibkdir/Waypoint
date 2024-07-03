@@ -3,6 +3,7 @@
 import { useState, type KeyboardEvent, type ChangeEvent  } from "react"
 import { type EndpointsContext } from "~/app/agent"
 import { useActions } from "~/utils/client"
+import { HumanMessageText } from "./Message"
 
 const Chat = () => {
     const actions = useActions<typeof EndpointsContext>()
@@ -15,7 +16,21 @@ const Chat = () => {
         const newElements = [...Elements]
         const Element = await actions.agent({ input, chatHistory: History })
 
-        newElements.push()
+        newElements.push(
+            <div className="flex">
+                <HumanMessageText content={input} key={History.length}/>
+                <div>
+                    {Element.ui}
+                </div>
+            </div>
+        );
+
+        (async () => {
+            const lastEvent = await Element.lastEvent
+            if (typeof lastEvent === 'object') {
+                // logic needed here
+            }
+        });
 
         setElements(newElements)
         setUserInput('')
@@ -25,13 +40,11 @@ const Chat = () => {
         <div className="w-6/12 pt-8">
             <div className="overflow-y-auto h-agent text-lg mr-1">
             </div>
-            <form onSubmit={async (e) => {
+            <form onSubmit={ async (e) => {
                 e.stopPropagation()
                 e.preventDefault()
                 await handleSubmit(UserInput)
-            }
-                
-                } className="pt-custom">
+            }} className="pt-custom">
                 <p className="font-medium">Where would you like to go?</p>
                 
                 <input 
