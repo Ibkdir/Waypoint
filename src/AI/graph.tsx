@@ -4,7 +4,7 @@ import { type BaseMessage } from "@langchain/core/messages";
 import { type RunnableConfig } from "@langchain/core/runnables";
 import { ChatPromptTemplate,MessagesPlaceholder } from "@langchain/core/prompts";
 import { StateGraph, START, END } from "@langchain/langgraph";
-import { pinpointTool } from "./Tools/exports";
+import { markerTool } from "./Tools/exports";
 import { type z } from "zod";
 
 // Graph Nodes
@@ -18,7 +18,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
             Provide a response clearly and concisely. Always be polite, informative, and efficient.`], 
         new MessagesPlaceholder({ variableName: "chatHistory", optional: true }) , ["human", "{input}"]
     ])
-    const tools = [pinpointTool]
+    const tools = [markerTool]
 
     const Model = new ChatOpenAI({
         model: "gpt-4o",
@@ -43,7 +43,7 @@ const invokeTools = async ( state: AgentState, config?: RunnableConfig ): Promis
         throw new Error('')
     }
     const toolMap = {
-        [pinpointTool.name]: pinpointTool,
+        [markerTool.name]: markerTool,
     }
 
     const selectedTool = toolMap[state.toolCall.name];

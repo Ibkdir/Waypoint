@@ -1,1 +1,1 @@
-export * from "./pinpoint"
+export * from "./Marker"

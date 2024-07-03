@@ -9,7 +9,7 @@ import { navigationMenuTriggerStyle } from '../ui/navigation-menu'
 
 const Navbar = () => {
 
-    const [Theme, setTheme] = useState(true) // If True, Theme is bright
+    const [BrightTheme, setBrightTheme] = useState(true)
 
     return (
         <div className="flex items-center w-screen px-6 sticky top-0 z-50 pt-2 nav-blur h-20">
@@ -22,8 +22,8 @@ const Navbar = () => {
 
             <div className="flex items-center flex-1 justify-end">
 
-            <Button onClick={() => setTheme((PrevValue => !PrevValue))} size="icon" variant="outline">
-                {Theme ? <Sun size={18} /> : <Moon size={18} />}
+            <Button onClick={() => setBrightTheme((PrevValue => !PrevValue))} size="icon" variant="outline">
+                {BrightTheme ? <Sun size={18} /> : <Moon size={18} />}
             </Button>
 
             <Link href={siteConfig.externalLinks.github} target='_blank'>

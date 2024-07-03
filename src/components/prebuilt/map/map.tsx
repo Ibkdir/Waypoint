@@ -1,7 +1,7 @@
 'use client'
 
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
-import { useMap } from './mapcontext';
+import { useMap } from './MapContext';
 
 const MapsKey = process.env.NEXT_PUBLIC_GMAP_API!;
 
@@ -11,13 +11,13 @@ if (!MapsKey) {
 
 const GoogleMapComponent = () => {
     
-    const { Position, handleCameraChange, PlacedMarkers } = useMap()
+    const { Position, handleCameraChange, Markers } = useMap()
 
     return(
       <div className='w-full h-full rounded-lg overflow-hidden'>
         <APIProvider apiKey={ MapsKey } onLoad={() => console.log("Map has successfully loaded")}>
           <Map {...Position} onCameraChanged={handleCameraChange}></Map>
-           { PlacedMarkers.map( (LLMmarkers, index) => ( <Marker key={index} position={LLMmarkers}/> ) ) }
+           { Markers.map( (MarkerCoordinates, index) => ( <Marker key={index} position={MarkerCoordinates}/> ) ) }
         </APIProvider>
       </div>
     )

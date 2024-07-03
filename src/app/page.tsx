@@ -1,5 +1,5 @@
-import Navbar from "~/components/prebuilt/nav";
-import Chat from "~/components/prebuilt/chat";
+import Navbar from "~/components/prebuilt/Navbar";
+import Chat from "~/components/prebuilt/Chat";
 
 export default function HomePage() {
   return (

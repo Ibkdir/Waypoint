@@ -1,6 +1,6 @@
 "use client";
 
-import { AIMessageText } from "~/components/message";
+import { AIMessageText } from "~/components/prebuilt/Message";
 import { type StreamableValue, useStreamableValue } from "ai/rsc";
 
 export function AIMessage(props: { value: StreamableValue<string> }) {
