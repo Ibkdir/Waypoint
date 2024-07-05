@@ -40,7 +40,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
 
 const invokeTools = async ( state: AgentState, config?: RunnableConfig ): Promise <Partial<AgentState>> => {
     if (!state.toolCall) {
-        throw new Error('')
+        throw new Error('No tool call found')
     }
     const toolMap = {
         [markerTool.name]: markerTool,

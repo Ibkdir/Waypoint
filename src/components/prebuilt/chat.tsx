@@ -28,8 +28,11 @@ const Chat = () => {
         (async () => {
             const lastEvent = await Element.lastEvent
             if (typeof lastEvent === 'object') {
-                // logic needed here
+                if (lastEvent['runAgent']['results']) {
+                    setHistory((prevHistory) => [...prevHistory, ['user', input], ['assistant', lastEvent['runAgent']['results']] ])
+                }
             }
+
         });
 
         setElements(newElements)
