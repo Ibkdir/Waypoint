@@ -73,4 +73,19 @@
     body {
       @apply bg-background text-foreground;
     }
+    @layer utilities {
+      .h-custom {
+        height: 42rem;
+      }
+      .pt-custom {
+        padding-top: 1.5rem;
+      }
+      .h-agent {
+        height: 90%
+      }
+      .nav-blur {
+        background-color: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(10px);
+      }}
   }

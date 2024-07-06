@@ -13,31 +13,33 @@ const Chat = () => {
     const [Elements, setElements] = useState<React.JSX.Element[]>([]);
 
     const handleSubmit = async (input: string) => {
-        const newElements = [...Elements]
-        const Element = await actions.agent({ input, chatHistory: History })
-
-        newElements.push(
-            <div className="flex">
-                <HumanMessageText content={input} key={History.length}/>
-                <div>
-                    {Element.ui}
+        setUserInput('');
+        const newElements = [...Elements];
+        
+        try {
+            const res = await actions.agent({ input, chatHistory: History }) as AgentResponse
+            const lastEvent = await res.lastEvent;
+    
+            newElements.push(
+                <div className="flex" key={History.length}>
+                    <HumanMessageText content={input} />
+                    <div>
+                        {res.ui}
+                    </div>
                 </div>
-            </div>
-        );
+            );
 
-        (async () => {
-            const lastEvent = await Element.lastEvent
-            if (typeof lastEvent === 'object') {
-                if (lastEvent['runAgent']['results']) {
-                    setHistory((prevHistory) => [...prevHistory, ['user', input], ['assistant', lastEvent['runAgent']['results']] ])
-                }
+            setElements(newElements);
+            if (lastEvent.useAgent!.results) {
+                const parsedLastEvent = lastEvent.useAgent?.results;
+                console.log(parsedLastEvent);
+            } else {
+                console.log(lastEvent.useAgent!)
             }
-
-        });
-
-        setElements(newElements)
-        setUserInput('')
-    }
+        } catch (error) {
+            console.error("Error during handleSubmit:", error);
+        }
+    };
 
     return (
         <div className="w-6/12 pt-8">
@@ -60,6 +62,21 @@ const Chat = () => {
             </form>  
         </div>
     )
+}
+
+// Interfaces
+
+interface LastEvent {
+    // Types from Graph
+    useAgent?: {
+        results?: string
+        toolCall?: { name: string, parameters: Record<string, unknown>; }
+        toolResult?: Record<string, unknown>
+    };
+}
+interface AgentResponse {
+    lastEvent: Promise<LastEvent>;
+    ui: React.JSX.Element;
 }
 
 export default Chat

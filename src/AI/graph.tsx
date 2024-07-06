@@ -83,8 +83,8 @@ export const runAgent = () => {
     })
         .addNode('useAgent', invokeModel)
         .addNode('useTools', invokeTools)
-        .addEdge(START, "useAgent")
         .addConditionalEdges('useAgent', toolDecision)
+        .addEdge(START, "useAgent")
         .addEdge("useTools", END);
     
     const graph = workflow.compile()
