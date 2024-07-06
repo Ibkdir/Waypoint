@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, type KeyboardEvent, type ChangeEvent  } from "react"
+import { useState, useEffect, useRef, type KeyboardEvent, type ChangeEvent  } from "react"
 import { type EndpointsContext } from "~/app/agent"
 import { useActions } from "~/utils/client"
 import { HumanMessageText } from "./Message"
+import { LocalContext } from "~/app/shared"
+import { useMap } from "./map/MapContext"
 
 const Chat = () => {
     const actions = useActions<typeof EndpointsContext>()
@@ -11,31 +13,41 @@ const Chat = () => {
     const [History, setHistory] = useState<[role: string, content: string][]>([])
     const [UserInput, setUserInput] = useState("")
     const [Elements, setElements] = useState<React.JSX.Element[]>([]);
+    const { addMarker } = useMap()
 
     const handleSubmit = async (input: string) => {
         setUserInput('');
         const newElements = [...Elements];
-        
+
+        const userMessageElement = (
+            <div className="flex flex-col w-full gap-1 mt-auto" key={History.length}>
+                <HumanMessageText content={input} />
+            </div>
+        );
+
+        newElements.push(userMessageElement);
+        setElements(newElements);
+
         try {
-            const res = await actions.agent({ input, chatHistory: History }) as AgentResponse
-            const lastEvent = await res.lastEvent;
-    
-            newElements.push(
-                <div className="flex" key={History.length}>
-                    <HumanMessageText content={input} />
-                    <div>
+            const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
+            const agentResponseElement = (
+                <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
+                    <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
                         {res.ui}
                     </div>
                 </div>
             );
-
-            setElements(newElements);
-            if (lastEvent.useAgent!.results) {
-                const parsedLastEvent = lastEvent.useAgent?.results;
-                console.log(parsedLastEvent);
-            } else {
-                console.log(lastEvent.useAgent!)
+            setElements(prevElements => [...prevElements, agentResponseElement]);
+            const lastEvent = await res.lastEvent;
+            
+            if (lastEvent.useAgent!.toolCall) {
+                if (lastEvent.useAgent!.toolCall.name === "markerTool") {
+                    const { lat, lng } = lastEvent.useTools?.toolResult![0]
+                    addMarker(lat, lng)
+                }
             }
+
+
         } catch (error) {
             console.error("Error during handleSubmit:", error);
         }
@@ -43,7 +55,10 @@ const Chat = () => {
 
     return (
         <div className="w-6/12 pt-8">
-            <div className="overflow-y-auto h-agent text-lg mr-1">
+            <div className="overflow-y-scroll scroll-smooth h-agent text-lg mr-1">
+            <LocalContext.Provider value={handleSubmit}>
+                <div className="flex flex-col w-full gap-1 mt-auto">{Elements}</div>
+            </LocalContext.Provider>
             </div>
             <form onSubmit={ async (e) => {
                 e.stopPropagation()
@@ -71,8 +86,8 @@ interface LastEvent {
     useAgent?: {
         results?: string
         toolCall?: { name: string, parameters: Record<string, unknown>; }
-        toolResult?: Record<string, unknown>
-    };
+    },
+    useTools?: { toolResult?: {lat: number, lng: number}[] }
 }
 interface AgentResponse {
     lastEvent: Promise<LastEvent>;
