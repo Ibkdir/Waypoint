@@ -19,9 +19,7 @@ const Navbar = () => {
                 <h3>Waypoint</h3>
             </Link>
             </div>
-
             <div className="flex items-center flex-1 justify-end">
-
             <Button onClick={() => setBrightTheme((PrevValue => !PrevValue))} size="icon" variant="outline">
                 {BrightTheme ? <Sun size={18} /> : <Moon size={18} />}
             </Button>

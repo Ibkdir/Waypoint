@@ -10,7 +10,6 @@ if (!MapsKey) {
 }
 
 const GoogleMapComponent = () => {
-    
     const { Position, handleCameraChange, Markers } = useMap()
 
     return(

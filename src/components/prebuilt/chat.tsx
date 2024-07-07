@@ -13,9 +13,11 @@ const Chat = () => {
     const [History, setHistory] = useState<[role: string, content: string][]>([])
     const [UserInput, setUserInput] = useState("")
     const [Elements, setElements] = useState<React.JSX.Element[]>([]);
+    const [IsLoading, setIsLoading] = useState(false)
     const { addMarker } = useMap()
 
     const handleSubmit = async (input: string) => {
+        setIsLoading(true)
         setUserInput('');
         const newElements = [...Elements];
 
@@ -29,6 +31,8 @@ const Chat = () => {
         setElements(newElements);
 
         try {
+            setHistory((prevHistory) => [...prevHistory, ['user', input]]);
+
             const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
             const agentResponseElement = (
                 <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
@@ -39,15 +43,29 @@ const Chat = () => {
             );
             setElements(prevElements => [...prevElements, agentResponseElement]);
             const lastEvent = await res.lastEvent;
+            const agentResults = lastEvent.useAgent?.results
+            const toolRes = lastEvent.useAgent!.toolCall
             
-            if (lastEvent.useAgent!.toolCall) {
-                if (lastEvent.useAgent!.toolCall.name === "markerTool") {
-                    const { lat, lng } = lastEvent.useTools?.toolResult![0]
+            if (agentResults) {
+                setHistory((prevHistory) => [
+                    ...prevHistory,
+                    ['assistant', agentResults]
+                ]);
+            } else if (toolRes) {
+                if (toolRes.name === 'markerTool' ) {
+                    const coordinates = lastEvent.useTools?.toolResult![0]
+                    const { lat, lng } = coordinates
                     addMarker(lat, lng)
                 }
+                const toolResString = JSON.stringify(toolRes, null, 2)
+
+                setHistory((prevHistory) => [
+                    ...prevHistory,
+                    ['assistant', toolResString]
+                ]);
             }
-
-
+            console.log('Updated History:', History);
+            setIsLoading(false)
         } catch (error) {
             console.error("Error during handleSubmit:", error);
         }
@@ -73,6 +91,7 @@ const Chat = () => {
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {setUserInput(e.target.value)}}
                     onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { e.key === "Enter" && handleSubmit}}
                     value={UserInput}
+                    disabled={IsLoading}
                     className="h-12 border-0 outline-none bg-transparent focus:outline-none focus:border-0 text-md w-full"/>
             </form>  
         </div>
