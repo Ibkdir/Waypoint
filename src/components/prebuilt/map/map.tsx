@@ -5,6 +5,7 @@ import { useMap } from './MapContext';
 
 const MapsKey = process.env.NEXT_PUBLIC_GMAP_API!;
 
+
 if (!MapsKey) {
   throw new Error("Your Google Maps key is missing. Please set NEXT_PUBLIC_GMAP_API environment variable.")
 }
