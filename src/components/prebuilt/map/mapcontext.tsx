@@ -26,7 +26,7 @@ const MapProvider = ({ children }: { children: ReactNode })  => {
     )
 }
 
-export const useMap = (): MapContextProps => {
+export const useMapContext = (): MapContextProps => {
     const context = useContext(MapContext)
     if (!context) {
         throw new Error('useMap must be used within a MapProvider')
@@ -44,7 +44,7 @@ interface MapContextProps {
     addMarker: (lat: number, lng: number) => void;
 }
 
-interface MarkerCoordinates {
+export interface MarkerCoordinates {
     lat: number;
     lng: number;
 }

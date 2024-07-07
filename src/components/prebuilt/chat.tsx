@@ -5,7 +5,7 @@ import { type EndpointsContext } from "~/app/agent"
 import { useActions } from "~/utils/client"
 import { HumanMessageText } from "./Message"
 import { LocalContext } from "~/app/shared"
-import { useMap } from "./map/MapContext"
+import { useMapContext } from "./map/MapContext"
 
 const Chat = () => {
     const actions = useActions<typeof EndpointsContext>()
@@ -14,7 +14,7 @@ const Chat = () => {
     const [UserInput, setUserInput] = useState("")
     const [Elements, setElements] = useState<React.JSX.Element[]>([]);
     const [IsLoading, setIsLoading] = useState(false)
-    const { addMarker } = useMap()
+    const { addMarker } = useMapContext()
 
     const handleSubmit = async (input: string) => {
         setIsLoading(true)
@@ -34,14 +34,6 @@ const Chat = () => {
             setHistory((prevHistory) => [...prevHistory, ['user', input]]);
 
             const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
-            const agentResponseElement = (
-                <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
-                    <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
-                        {res.ui}
-                    </div>
-                </div>
-            );
-            setElements(prevElements => [...prevElements, agentResponseElement]);
             const lastEvent = await res.lastEvent;
             const agentResults = lastEvent.useAgent?.results
             const toolRes = lastEvent.useAgent!.toolCall
@@ -63,6 +55,17 @@ const Chat = () => {
                     ...prevHistory,
                     ['assistant', toolResString]
                 ]);
+                
+                const agentResponseElement = (
+                    <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
+                        <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
+                            {res.ui}
+                        </div>
+                    </div>
+                );
+                
+                setElements(prevElements => [...prevElements, agentResponseElement]);
+
             }
             console.log('Updated History:', History);
             setIsLoading(false)
