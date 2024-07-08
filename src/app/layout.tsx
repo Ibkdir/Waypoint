@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
-  icons: [{ rel: "icon", url: "/" }],
+  icons: [{ rel: "icon", url: "/compass-light.svg" }],
 };
 
 export default function RootLayout(props: { children: ReactNode }) {

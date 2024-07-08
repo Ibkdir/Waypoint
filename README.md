@@ -6,7 +6,8 @@
 - [x] Create Basic UI
 - [x] Build Graph and Tools ( LangGraph / Langchain )
 - [x] Attach Map Component (Google Maps)
-- [~] Bring Chat, Map, and Graph together to build cohesive application
+- [x] Bring Chat, Map, and Graph together to build cohesive application
+- [~] Build UI Tools
 - [] Error Managment
 - [] Implement Ratelimiting
 - [] Better UI
