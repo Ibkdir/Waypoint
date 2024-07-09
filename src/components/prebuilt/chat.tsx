@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef, type KeyboardEvent, type ChangeEvent  } from "react"
+import { useState, type KeyboardEvent, type ChangeEvent  } from "react"
 import { type EndpointsContext } from "~/app/agent"
 import { useActions } from "~/utils/client"
 import { HumanMessageText } from "./Message"
 import { LocalContext } from "~/app/shared"
 import { useMapContext } from "./map/MapContext"
+import { LoadingWeatherCard, WeatherCard } from "./Weather"
 
 const Chat = () => {
     const actions = useActions<typeof EndpointsContext>()
@@ -96,7 +97,7 @@ const Chat = () => {
                     value={UserInput}
                     disabled={IsLoading}
                     className="h-12 border-0 outline-none bg-transparent focus:outline-none focus:border-0 text-md w-full"/>
-            </form>  
+            </form>
         </div>
     )
 }

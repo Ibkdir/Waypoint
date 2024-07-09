@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { siteConfig } from "~/lib/siteConfig";
 import { EndpointsContext } from "./agent";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

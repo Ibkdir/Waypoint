@@ -2,7 +2,7 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { fetchSingleCoordinate } from "./Marker";
 import { createRunnableUI } from "~/utils/server";
-import { WeatherComponent, WeatherLoading } from "~/components/prebuilt/Weather";
+import { LoadingWeatherCard, WeatherCard } from "~/components/prebuilt/Weather";
 import { z } from "zod";
 
 export const weatherSchema = z.object({
@@ -12,7 +12,7 @@ export const weatherSchema = z.object({
 })
 
 const fetchWeather = async (address: z.infer<typeof weatherSchema>) => {
-    // Implement this
+    
     return address
 };
 
@@ -25,9 +25,9 @@ export const weatherTool = new DynamicStructuredTool({
          If only a city is provided, ask the user for the country, and for the USA, the state as well.`,
     schema: weatherSchema,
     func: async (input, config) => {
-        const stream = await createRunnableUI(config, <WeatherLoading />)
+        const stream = await createRunnableUI(config, <LoadingWeatherCard />)
         const weatherData = await fetchWeather(input)
-        stream.done(<WeatherComponent {...weatherData}/>)
+        stream.done(<WeatherCard {...weatherData}/>)
         return JSON.stringify(weatherData, null, 2)
     }
 })
