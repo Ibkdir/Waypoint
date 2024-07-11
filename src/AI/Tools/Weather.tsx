@@ -2,7 +2,7 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { fetchSingleCoordinate } from "./Marker";
 import { createRunnableUI } from "~/utils/server";
-import { LoadingWeatherCard, WeatherCard } from "~/components/prebuilt/Weather";
+import { LoadingWeatherCard, WeatherCard } from "~/components/prebuilt/WeatherComponent";
 import { z } from "zod";
 
 const OpenWeatherKey = process.env.OPENWEATHER_API_KEY
