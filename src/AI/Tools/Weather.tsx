@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { fetchSingleCoordinate } from "./Marker";
