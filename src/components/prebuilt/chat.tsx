@@ -46,15 +46,18 @@ const Chat = () => {
             if (lastEvent.useAgent?.results) {
                 setHistory(prevHistory => [
                     ...prevHistory,
-                    ['assistant', lastEvent.useAgent!.results!]
+                    ['assistant', lastEvent.useAgent?.results ?? '']
                 ]);
             }
-    
+            
             if (lastEvent.useAgent?.toolCall) {
                 const toolRes = lastEvent.useAgent.toolCall;
                 if (toolRes.name === 'markerTool') {
-                    const { lat, lng } = lastEvent.useTools?.toolResult?.[0]!;
-                    addMarker(lat, lng);
+                    const coordinates = lastEvent.useTools?.toolResult?.[0];
+                    if (coordinates) {
+                        const { lat, lng } = coordinates;
+                        addMarker(lat, lng);
+                    }
                 }
                 const toolResString = JSON.stringify(toolRes, null, 2);
                 setHistory(prevHistory => [

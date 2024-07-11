@@ -5,7 +5,6 @@ import { type RunnableConfig } from "@langchain/core/runnables";
 import { ChatPromptTemplate,MessagesPlaceholder } from "@langchain/core/prompts";
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { markerTool, weatherTool } from "./Tools/exports";
-import { type z } from "zod";
 
 // Graph Nodes
 

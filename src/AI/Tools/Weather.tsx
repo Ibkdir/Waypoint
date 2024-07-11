@@ -19,7 +19,7 @@ const fetchWeather = async (address: z.infer<typeof weatherSchema>) => {
 
     const weatherURL = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&appid=${OpenWeatherKey}`;
     const weatherRes = await fetch(weatherURL);
-    const weatherData = await weatherRes.json();
+    const weatherData: WeatherData = await weatherRes.json();
     let currentTime = new Date().toLocaleTimeString();
     currentTime = convertToMilitaryTime(currentTime)
     const { temp, wind_speed, humidity, weather } = weatherData.current
@@ -57,3 +57,20 @@ export const weatherTool = new DynamicStructuredTool({
         return JSON.stringify(weatherData, null, 2)
     }
 })
+interface Weather {
+  id: number;
+  main: string;
+  description: string;
+  icon: string;
+}
+
+interface CurrentWeather {
+  temp: number;
+  wind_speed: number;
+  humidity: number;
+  weather: Weather[];
+}
+
+interface WeatherData {
+  current: CurrentWeather;
+}

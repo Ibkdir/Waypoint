@@ -10,7 +10,7 @@ const CustomMarkdown = ({ content }: { content: string }) => (
   <ReactMarkdown
     rehypePlugins={[rehypeRaw]}
     components={{
-      p: ({ node, ...props }) => <div {...props} />,
+      p: (props) => <div {...props} />,
     }}
   >
     {content}

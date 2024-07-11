@@ -33,7 +33,7 @@ export const WeatherCard = ({
   humidity: number;
   weather: WeatherData[];
 }) => {
-  const { id, description } = weather[0] as WeatherData;
+  const { id, description } = weather[0]!;
   const descriptionUpper = description.charAt(0).toUpperCase() + description.slice(1);
   const tempInC = (temp - 273.15).toFixed(1);
 
