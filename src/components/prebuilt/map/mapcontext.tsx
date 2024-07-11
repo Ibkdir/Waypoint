@@ -36,7 +36,6 @@ export const useMapContext = (): MapContextProps => {
 }   
 
 // Interfaces
-
 interface MapContextProps {
     Position: MapCameraProps;
     handleCameraChange: (ev: MapCameraChangedEvent) => void;

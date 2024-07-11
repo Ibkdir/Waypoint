@@ -1,7 +1,7 @@
 import Navbar from "~/components/prebuilt/Navbar";
-import Chat from "~/components/prebuilt/Chat";
+import Chat from "~/components/prebuilt/chat";
 import GoogleMapComponent from "~/components/prebuilt/map/map";
-import MapProvider from "~/components/prebuilt/map/MapContext";
+import MapProvider from "~/components/prebuilt/map/mapcontext";
 
 export default function HomePage() {
   return (

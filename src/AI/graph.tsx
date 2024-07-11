@@ -4,7 +4,7 @@ import { type BaseMessage } from "@langchain/core/messages";
 import { type RunnableConfig } from "@langchain/core/runnables";
 import { ChatPromptTemplate,MessagesPlaceholder } from "@langchain/core/prompts";
 import { StateGraph, START, END } from "@langchain/langgraph";
-import { markerTool } from "./Tools/exports";
+import { markerTool, weatherTool } from "./Tools/exports";
 import { type z } from "zod";
 
 // Graph Nodes
@@ -14,11 +14,11 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
         ["system", 
             `You are a travel assistant AI designed to help users with travel-related inquiries.\n 
             Analyze each query to determine if it requires plain text information or an action via a tool.\n
-            For informational queries like "What are the top attractions in Paris?", respond with text, then place a marker down on the location you answered with using the 'markerTool'.\n
+            For informational queries like "What are the top attractions in Paris?", respond with text, then place a marker down on the location you answered with using the 'markerTool'. Always say something before or after tool usage. Never just use a tool unless prompted specifically by a user to not do so.\n
             Provide a response clearly and concisely. Always be polite, informative, and efficient.`], 
         new MessagesPlaceholder({ variableName: "chatHistory", optional: true }) , ["human", "{input}"]
     ])
-    const tools = [markerTool]
+    const tools = [markerTool, weatherTool]
 
     const Model = new ChatOpenAI({
         model: "gpt-4o",
@@ -44,6 +44,7 @@ const invokeTools = async ( state: AgentState, config?: RunnableConfig ): Promis
     }
     const toolMap = {
         [markerTool.name]: markerTool,
+        [weatherTool.name]: weatherTool,
     }
 
     const selectedTool = toolMap[state.toolCall.name];
@@ -51,7 +52,7 @@ const invokeTools = async ( state: AgentState, config?: RunnableConfig ): Promis
         throw new Error('')
     }
 
-    const stateParams = state.toolCall.parameters as z.infer<typeof selectedTool.schema>
+    const stateParams = state.toolCall.parameters as ToolParameters
 
     const toolResult = await selectedTool.invoke(stateParams, config)
     const parsedToolResult = JSON.parse(toolResult) as Record<string, unknown>
@@ -105,3 +106,11 @@ interface AgentState {
     }
     toolResult?: Record<string, unknown> // Result from tool usage
 }
+
+type ToolParameters = {
+    address: string | string[];
+  } & {
+    city: string;
+    country: string;
+    state?: string;
+  };

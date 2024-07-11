@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect } from 'react';
-import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
-import { useMapContext } from './MapContext';
+import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
+import { useMapContext } from './mapcontext';
 
 const MapsKey = process.env.NEXT_PUBLIC_GMAP_API!;
+const MapID = process.env.NEXT_PUBLIC_MAP_ID
 
 if (!MapsKey) {
   throw new Error("Your Google Maps key is missing. Please set NEXT_PUBLIC_GMAP_API environment variable.")
@@ -36,14 +37,13 @@ const GoogleMap = () => {
             clearInterval(zoomInterval);
           }
         }, 80); // 80ms seems to be good
-  
       }
     }, [Markers, map]);
 
     return(
       <div className='w-full h-full rounded-lg overflow-hidden'>
-        <Map {...Position} onCameraChanged={handleCameraChange}></Map>
-          { Markers.map( (MarkerCoordinates, index) => ( <Marker key={index} position={MarkerCoordinates}/> ) ) }
+        <Map {...Position} onCameraChanged={handleCameraChange} mapId={ MapID }></Map>
+          { Markers.map( (MarkerCoordinates, index) => ( <AdvancedMarker key={index} position={MarkerCoordinates}/> ) ) }
       </div>
     )
 }

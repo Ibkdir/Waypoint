@@ -3,10 +3,9 @@
 import { useState, type KeyboardEvent, type ChangeEvent  } from "react"
 import { type EndpointsContext } from "~/app/agent"
 import { useActions } from "~/utils/client"
-import { HumanMessageText } from "./Message"
+import { HumanMessageText } from "./message"
 import { LocalContext } from "~/app/shared"
-import { useMapContext } from "./map/MapContext"
-import { LoadingWeatherCard, WeatherCard } from "./Weather"
+import { useMapContext } from "./map/mapcontext"
 
 const Chat = () => {
     const actions = useActions<typeof EndpointsContext>()
@@ -16,64 +15,60 @@ const Chat = () => {
     const [Elements, setElements] = useState<React.JSX.Element[]>([]);
     const [IsLoading, setIsLoading] = useState(false)
     const { addMarker } = useMapContext()
-
+    
     const handleSubmit = async (input: string) => {
-        setIsLoading(true)
+        setIsLoading(true);
         setUserInput('');
-        const newElements = [...Elements];
-
+        
         const userMessageElement = (
             <div className="flex flex-col w-full gap-1 mt-auto" key={History.length}>
                 <HumanMessageText content={input} />
             </div>
         );
-
-        newElements.push(userMessageElement);
-        setElements(newElements);
-
+        
+        setElements(prevElements => [...prevElements, userMessageElement]);
+        setHistory(prevHistory => [...prevHistory, ['user', input]]);
+    
         try {
-            setHistory((prevHistory) => [...prevHistory, ['user', input]]);
-
             const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
-            const lastEvent = await res.lastEvent;
-            const agentResults = lastEvent.useAgent?.results
-            const toolRes = lastEvent.useAgent!.toolCall
+            const agentResponseElement = (
+                <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
+                    <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
+                        {res.ui}
+                    </div>
+                </div>
+            );
             
-            if (agentResults) {
-                setHistory((prevHistory) => [
+            setElements(prevElements => [...prevElements, agentResponseElement]);
+            
+            const lastEvent = await res.lastEvent;
+    
+            if (lastEvent.useAgent?.results) {
+                setHistory(prevHistory => [
                     ...prevHistory,
-                    ['assistant', agentResults]
+                    ['assistant', lastEvent.useAgent!.results!]
                 ]);
-            } else if (toolRes) {
-                if (toolRes.name === 'markerTool' ) {
-                    const coordinates = lastEvent.useTools?.toolResult![0]
-                    const { lat, lng } = coordinates
-                    addMarker(lat, lng)
+            }
+    
+            if (lastEvent.useAgent?.toolCall) {
+                const toolRes = lastEvent.useAgent.toolCall;
+                if (toolRes.name === 'markerTool') {
+                    const { lat, lng } = lastEvent.useTools?.toolResult?.[0]!;
+                    addMarker(lat, lng);
                 }
-                const toolResString = JSON.stringify(toolRes, null, 2)
-
-                setHistory((prevHistory) => [
+                const toolResString = JSON.stringify(toolRes, null, 2);
+                setHistory(prevHistory => [
                     ...prevHistory,
                     ['assistant', toolResString]
                 ]);
-                
-                const agentResponseElement = (
-                    <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
-                        <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
-                            {res.ui}
-                        </div>
-                    </div>
-                );
-                
-                setElements(prevElements => [...prevElements, agentResponseElement]);
-
             }
-            console.log('Updated History:', History);
-            setIsLoading(false)
+            setIsLoading(false);
         } catch (error) {
             console.error("Error during handleSubmit:", error);
+            setIsLoading(false);
         }
     };
+
 
     return (
         <div className="w-6/12 pt-8">
