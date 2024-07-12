@@ -49,7 +49,7 @@ export const weatherTool = new DynamicStructuredTool({
         `The WeatherTool provides weather information based on the user's address. 
         For the USA, the user must provide the city, state, and country; for other countries, the city and country are required.
          If only a country is provided, ask the user if the capital city's weather is acceptable. 
-         If only a city is provided, ask the user for the country, and for the USA, the state as well.`,
+         If only a city is provided, ask the user for the country, and for the USA, the state as well. Always say something after using the tool like: "If you have any other questions please let me know"`,
     schema: weatherSchema,
     func: async (input, config) => {
         const stream = await createRunnableUI(config, <LoadingWeatherCard />)

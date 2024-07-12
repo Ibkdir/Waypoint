@@ -42,7 +42,8 @@ export const markerTool = new DynamicStructuredTool({
   description: 
     `A tool for placing markers on the map, given a specific address, which includes Street, City, State, and Country. 
     If you want to show a user a location, use this tool by passing in the address of the location. 
-    You can also place multiple markers by passing in an array of addresses. The addresses should also be in Street, City, State, and Country format in an array`,
+    You can also place multiple markers by passing in an array of addresses. The addresses should also be in Street, City, State, and Country format in an array
+    Always say something after using the tool like: "If you have any other questions please let me know"`,
   schema: markerSchema,
   func: async (input, _config) => {
     let addresses = input.address;

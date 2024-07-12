@@ -8,7 +8,6 @@ import { Button } from '~/components/ui/button'
 import { navigationMenuTriggerStyle } from '../ui/navigation-menu'
 
 const Navbar = () => {
-
     const [BrightTheme, setBrightTheme] = useState(true)
 
     return (
