@@ -51,11 +51,20 @@ export const weatherTool = new DynamicStructuredTool({
          If only a country is provided, ask the user if the capital city's weather is acceptable. 
          If only a city is provided, ask the user for the country, and for the USA, the state as well. Always say something after using the tool like: "If you have any other questions please let me know"`,
     schema: weatherSchema,
-    func: async (input, config) => {
+    func: async (input, config?) => {
         const stream = await createRunnableUI(config, <LoadingWeatherCard />)
-        const weatherData = await fetchWeather(input)
-        stream.done(<WeatherCard {...weatherData}/>)
-        return JSON.stringify(weatherData, null, 2)
+        try {
+          console.log('Fetching weather data for:', input);
+          const weatherData = await fetchWeather(input);
+          console.log('Weather data fetched:', weatherData);
+          stream.done(<WeatherCard {...weatherData} />);
+          return JSON.stringify(weatherData, null, 2);
+        } catch (error) {
+          console.error('Error fetching weather:', error);
+          stream.done(<div>Error fetching weather data. Please try again later.</div>);
+          return JSON.stringify({ error: "Error happened :" }, null, 2);
+        }
+    
     }
 })
 interface Weather {

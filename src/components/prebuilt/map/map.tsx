@@ -40,12 +40,16 @@ const GoogleMap = () => {
       }
     }, [Markers, map]);
 
-    return(
-      <div className='w-full h-full rounded-lg overflow-hidden'>
-        <Map {...Position} onCameraChanged={handleCameraChange} mapId={ MapID }></Map>
-          { Markers.map( (MarkerCoordinates, index) => ( <AdvancedMarker key={index} position={MarkerCoordinates}/> ) ) }
+  return (
+      <div className="w-full h-full rounded-lg px-3 md:px-0 overflow-hidden">
+          <Map {...Position} onCameraChanged={handleCameraChange} mapId={MapID} />
+          <div>
+              {Markers.map((MarkerCoordinates, index) => (
+                  <AdvancedMarker key={index} position={MarkerCoordinates} />
+              ))}
+          </div>
       </div>
-    )
+  );
 }
 
 const GoogleMapComponent = () => {

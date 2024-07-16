@@ -13,7 +13,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
         ["system", 
             `You are a travel assistant AI designed to help users with travel-related inquiries.\n 
             Analyze each query to determine if it requires plain text information or an action via a tool.\n
-            For informational queries like "What are the top attractions in Paris?", respond with text, then place a marker down on the location you answered with using the 'markerTool'. Always say something before or after tool usage. Never just use a tool unless prompted specifically by a user to not do so.\n
+            For informational queries like "What are the top attractions in Paris?", respond with text, then place a marker down on the location you answered with using the 'markerTool'. Always say something before or after tool usage.\n
             Provide a response clearly and concisely. Always be polite, informative, and efficient.`], 
         new MessagesPlaceholder({ variableName: "chatHistory", optional: true }) , ["human", "{input}"]
     ])
@@ -27,7 +27,8 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
         verbose: true,
     }).bindTools(tools);
 
-    const res = await systemPrompt.pipe(Model).invoke({ input: state.input, chatHistory: state.chatHistory },  config)
+    const chain = systemPrompt.pipe(Model)
+    const res = await chain.invoke({ input: state.input, chatHistory: state.chatHistory },  config)
     if (res.tool_calls && res.tool_calls.length > 0) {
         return { toolCall: {
             name: res.tool_calls[0]!.name, 
@@ -48,7 +49,7 @@ const invokeTools = async ( state: AgentState, config?: RunnableConfig ): Promis
 
     const selectedTool = toolMap[state.toolCall.name];
     if (!selectedTool) {
-        throw new Error('')
+        throw new Error('Tool is not available')
     }
 
     const stateParams = state.toolCall.parameters as ToolParameters

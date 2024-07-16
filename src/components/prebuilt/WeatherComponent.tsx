@@ -24,6 +24,8 @@ export const WeatherCard = ({ addressString, currentTime, temp, wind_speed, humi
   const descriptionUpper = description.charAt(0).toUpperCase() + description.slice(1);
   const tempInC = (temp - 273.15).toFixed(1);
 
+  console.log("WeatherCard rendered with data:", addressString, currentTime, temp, wind_speed, humidity, weather)
+
   return (
     <div className="flex py-2 w-[28rem] max-w-full">
       <div className="w-full max-w-xl m-1">
@@ -61,6 +63,9 @@ export const WeatherCard = ({ addressString, currentTime, temp, wind_speed, humi
 };
 
 export const LoadingWeatherCard = () => {
+
+  console.log("LoadingWeatherCard rendered")
+
   return (
     <div className="flex py-2 w-[28rem] max-w-full">
       <div className="w-full max-w-xl m-1">

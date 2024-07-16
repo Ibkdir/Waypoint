@@ -3,8 +3,15 @@
  * for Docker builds.
  */
 await import("./src/env.js");
+import withBundleAnalyzer from '@next/bundle-analyzer';
 
-/** @type {import("next").NextConfig} */
-const config = {};
+// Enable the bundle analyzer if ANALYZE environment variable is set to 'true'
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
-export default config;
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+// Export the configuration with the bundle analyzer applied
+export default bundleAnalyzer(nextConfig);

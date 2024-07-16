@@ -74,17 +74,8 @@
       @apply bg-background text-foreground;
     }
     @layer utilities {
-      .h-custom {
-        height: 42rem;
-      }
       .mh-custom {
         max-height: 42rem;
-      }
-      .pt-custom {
-        padding-top: 1.5rem;
-      }
-      .h-agent {
-        height: 90%
       }
       .nav-blur {
         background-color: rgba(255, 255, 255, 0.5);

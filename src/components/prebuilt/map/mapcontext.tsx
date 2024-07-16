@@ -13,8 +13,8 @@ const MapProvider = ({ children }: { children: ReactNode })  => {
 
     const handleCameraChange = useCallback((ev: MapCameraChangedEvent) => setPosition(ev.detail), []);
 
-    const addMarker = useCallback((lat: number, lng: number) => {
-        setMarkers((prevPlacedMarkers) => [...prevPlacedMarkers, { lat, lng }]);
+    const addMarker = useCallback((coordinates: {lat: number, lng: number}[]) => {
+        setMarkers((prevPlacedMarkers) => [...prevPlacedMarkers, ...coordinates]);
     }, []);
 
     return (
@@ -40,7 +40,7 @@ interface MapContextProps {
     Position: MapCameraProps;
     handleCameraChange: (ev: MapCameraChangedEvent) => void;
     Markers: MarkerCoordinates[];
-    addMarker: (lat: number, lng: number) => void;
+    addMarker: (coordinates: {lat: number, lng: number}[]) => void;
 }
 
 export interface MarkerCoordinates {
