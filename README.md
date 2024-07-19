@@ -1,18 +1,46 @@
 # Waypoint
 
+![Workflow](/public/Workflow.png)
 
+## Overview
 
-## Todo:
+This application utilizes the T3 stack, Shadcn, LangGraph, Langchain, and the AI SDK from Vercel to create a chat assistant and agent specialized in travel-related queries. This assistant can perform various tasks such as placing markers on maps and streaming generative UI components. This project aims to enhance the AI chat experience through generative UI and smart tool use.
 
-- [x] Deploy to Vercel - (Prod is currently broken with UI tools but will work on it.)
-- [x] Create Basic UI
-- [x] Build Graph and Tools ( LangGraph / Langchain )
-- [x] Attach Map Component (Google Maps)
-- [x] Bring Chat, Map, and Graph together to build cohesive application
-- [x] Build UI Tools
-- [~] Error Managment
-- [~] Implement Ratelimiting
-- [~] Better UI
+## Getting Started
+
+### Installation
+
+Clone the repository and install its dependencies on your local machine:
+
+```
+git clone https://github.com/Ibkdir/Waypoint.git
+
+cd Waypoint
+
+npm install
+```
+
+Next, copy the .env.example file to .env and fill in your environment variables:
+
+```
+NEXT_PUBLIC_GMAP_API='..'
+NEXT_PUBLIC_MAP_ID='...'
+OPENAI_API_KEY='...'
+OPENWEATHER_API_KEY='...'
+```
+ 
+### Running the Application
+
+To run the application in development mode, use:
+
+`npm run dev`
+
+For production mode, build and start the application:
+
+```
+npm run build
+npm start
+```
 
 ## Acknowledgments
 

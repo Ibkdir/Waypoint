@@ -104,7 +104,7 @@ const Chat = () => {
                 <div className="flex border rounded-md border-gray-300 items-center bg-inherit">
                     <input
                     type="text"
-                    placeholder="Start typing or upload a file..."
+                    placeholder="Start typing..."
                     onChange={(e: ChangeEvent<HTMLInputElement>) => { setUserInput(e.target.value) }}
                     onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { e.key === "Enter" && handleSubmit }}
                     value={UserInput}

@@ -8,7 +8,7 @@ import { ThemeSwitch } from './SwitchTheme'
 
 const Navbar = () => {
     return (
-        <div className="flex items-center w-screen px-6 static md:sticky top-0 z-50 pt-2 nav-blur h-20 dark:bg-black">
+        <div className="flex items-center w-screen px-6 static md:sticky top-0 z-50 pt-2 nav-blur h-20 dark:bg-transparent">
             <div className="flex items-center flex-1">
                 <Link href="/" className="flex items-center text-lg">
                 <Compass size={32} className="pr-1 size-8"/>
