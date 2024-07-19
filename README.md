@@ -33,7 +33,9 @@ OPENWEATHER_API_KEY='...'
 
 To run the application in development mode, use:
 
-`npm run dev`
+```
+npm run dev
+```
 
 For production mode, build and start the application:
 
