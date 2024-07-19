@@ -8,7 +8,7 @@ import { markerTool, weatherTool } from "./Tools/exports";
 
 // Graph Nodes
 
-const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promise <Partial<AgentState>> => {
+const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promise<Partial<AgentState>>=> {
     const systemPrompt = ChatPromptTemplate.fromMessages([ 
         ["system", 
             `You are a travel assistant AI designed to help users with travel-related inquiries.\n 
@@ -20,7 +20,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
     const tools = [markerTool, weatherTool]
 
     const Model = new ChatOpenAI({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.1,
         apiKey: process.env.OPENAI_API_KEY,
         streaming: true,
@@ -28,13 +28,13 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
     }).bindTools(tools);
 
     const chain = systemPrompt.pipe(Model)
-    const res = await chain.invoke({ input: state.input, chatHistory: state.chatHistory },  config)
+
+    const res = await chain.invoke({ input: state.input, chatHistory: state.chatHistory }, config)
     if (res.tool_calls && res.tool_calls.length > 0) {
         return { toolCall: {
             name: res.tool_calls[0]!.name, 
             parameters: res.tool_calls[0]!.args
-        }}
-    }
+    }}}
     return { results: res.content as string }
 }
 
@@ -54,7 +54,7 @@ const invokeTools = async ( state: AgentState, config?: RunnableConfig ): Promis
 
     const stateParams = state.toolCall.parameters as ToolParameters
 
-    const toolResult = await selectedTool.invoke(stateParams, config)
+    const toolResult = await selectedTool.invoke(stateParams, config) as string
     const parsedToolResult = JSON.parse(toolResult) as Record<string, unknown>
 
     return { toolResult: parsedToolResult };
@@ -93,7 +93,6 @@ export const runAgent = () => {
 }
 
 // Interfaces
-
 interface AgentState {
     input: string // Required
     chatHistory: BaseMessage[]; // Required
@@ -113,4 +112,4 @@ type ToolParameters = {
     city: string;
     country: string;
     state?: string;
-  };
+};

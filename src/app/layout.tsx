@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { siteConfig } from "~/lib/siteConfig";
 import { EndpointsContext } from "./agent";
 import { type ReactNode } from "react";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +19,11 @@ export default function RootLayout(props: { children: ReactNode }) {
     <html lang="en" className={`${inter.className}`}>
       <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
       <body>
-        <div>
-          <EndpointsContext>{props.children}</EndpointsContext>
-        </div>
+        <Providers>
+          <div>
+            <EndpointsContext>{props.children}</EndpointsContext>
+          </div>
+        </Providers>
       </body>
     </html>
   );

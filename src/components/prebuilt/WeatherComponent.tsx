@@ -1,6 +1,4 @@
-'use client'
-
-import { CloudLightning, CloudRain, Snowflake, Tornado, Cloud, Sun, Drop, Wind } from "@phosphor-icons/react"
+import { CloudLightning, CloudRain, Snowflake, Tornado, Cloud, Sun, Drop, Wind } from "@phosphor-icons/react/dist/ssr"
 
 const weatherIcon = (WeatherCode: number) => {
   if (WeatherCode >= 200 && WeatherCode <= 232) {
@@ -23,8 +21,6 @@ export const WeatherCard = ({ addressString, currentTime, temp, wind_speed, humi
   const { id, description } = weather[0]!;
   const descriptionUpper = description.charAt(0).toUpperCase() + description.slice(1);
   const tempInC = (temp - 273.15).toFixed(1);
-
-  console.log("WeatherCard rendered with data:", addressString, currentTime, temp, wind_speed, humidity, weather)
 
   return (
     <div className="flex py-2 w-[28rem] max-w-full">
@@ -63,9 +59,6 @@ export const WeatherCard = ({ addressString, currentTime, temp, wind_speed, humi
 };
 
 export const LoadingWeatherCard = () => {
-
-  console.log("LoadingWeatherCard rendered")
-
   return (
     <div className="flex py-2 w-[28rem] max-w-full">
       <div className="w-full max-w-xl m-1">
