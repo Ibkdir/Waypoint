@@ -157,9 +157,5 @@ interface AgentResponse {
     lastEvent: Promise<LastEvent>;
     ui: React.JSX.Element;
 }
-interface Prompt {
-    prompt: string,
-    icon: JSX.Element
-}
 
 export default Chat

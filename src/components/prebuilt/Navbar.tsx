@@ -18,7 +18,7 @@ const Navbar = () => {
 
             <div className="flex items-center flex-1 justify-end">
             <ThemeSwitch />
-            <Link href={siteConfig.externalLinks.github} target='_blank'>
+            <Link href={siteConfig.externalLinks.github} target='_blank' className='max-w-fit'>
                 <GithubLogo size={32} className={`${navigationMenuTriggerStyle()} border ml-1`}/>
             </Link>
             </div>            

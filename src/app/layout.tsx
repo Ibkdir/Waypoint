@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
 
+import { Analytics } from '@vercel/analytics/react';
 import { Inter } from "next/font/google";
 import { siteConfig } from "~/lib/siteConfig";
 import { EndpointsContext } from "./agent";
@@ -22,6 +23,7 @@ export default function RootLayout(props: { children: ReactNode }) {
         <Providers>
           <div>
             <EndpointsContext>{props.children}</EndpointsContext>
+            <Analytics />
           </div>
         </Providers>
       </body>
