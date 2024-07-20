@@ -6,6 +6,7 @@ import { useActions } from "~/utils/client"
 import { HumanMessageText } from "./message"
 import { LocalContext } from "~/app/shared"
 import { useMapContext } from "./map/mapcontext"
+import { ChatCards } from "./chatCards"
 import { Button } from "../ui/button"
 import { ArrowCircleUp } from "@phosphor-icons/react"
 
@@ -92,7 +93,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="w-full h-full flex flex-col border rounded mt-3 md:px-0 min-h-[29rem] max-h-[29rem] max-w-screen-xl pt-2
+        <div className="w-full h-full flex flex-col border rounded mt-3 min-h-[19rem] max-h-[19rem] max-w-screen-xl pt-2
                         md:mt-0 md:w-1/2 md:mx-0 md:min-h-[none] md:max-h-[none] self-center dark:text-white">
             <div className="flex-grow overflow-y-scroll scroll-smooth p-4 rounded-t-lg min-w-full">
                 <LocalContext.Provider value={handleSubmit}>
@@ -100,6 +101,8 @@ const Chat = () => {
                     <div ref={messageRef}></div>
                 </LocalContext.Provider>
             </div>
+
+           { (!History.length) && <ChatCards onCardClick={handleSubmit} /> }
 
             <form
                 className="p-4 rounded-b-lg flex flex-col md:sticky md:bottom-0 fixed bottom-2 left-0 right-0 w-full dark:bg-zinc-950"
@@ -153,6 +156,10 @@ interface LastEvent {
 interface AgentResponse {
     lastEvent: Promise<LastEvent>;
     ui: React.JSX.Element;
+}
+interface Prompt {
+    prompt: string,
+    icon: JSX.Element
 }
 
 export default Chat
