@@ -4,7 +4,7 @@
 
 ## Overview
 
-This application utilizes the T3 stack, Shadcn, LangGraph, Langchain, and the AI SDK from Vercel to create a chat assistant and agent specialized in travel-related queries. This assistant can perform various tasks such as placing markers on maps and streaming generative UI components. This project aims to enhance the AI chat experience through generative UI and smart tool use.
+This application utilizes the T3 stack, Shadcn, LangGraph, Langchain, and the AI SDK from Vercel to create a chat assistant and agent specialized in travel-related queries. This assistant can perform various tasks such as placing markers on maps and streaming generative UI components. This project aims to enhance the AI chat experience through the use of generative UI and tools.
 
 ## Getting Started
 

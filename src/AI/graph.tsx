@@ -20,7 +20,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
     const tools = [markerTool, weatherTool]
 
     const Model = new ChatOpenAI({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         temperature: 0.1,
         apiKey: process.env.OPENAI_API_KEY,
         streaming: true,
@@ -108,6 +108,8 @@ interface AgentState {
 
 type ToolParameters = {
     address: string | string[];
+    RemovePrevMarkers?: boolean;
+    ZoomLevel: number;
   } & {
     city: string;
     country: string;

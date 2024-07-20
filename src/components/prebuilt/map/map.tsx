@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 import { useMapContext } from './mapcontext';
 
@@ -12,33 +12,42 @@ if (!MapsKey) {
 }
 
 const GoogleMap = () => {
-    const { Position, handleCameraChange, Markers } = useMapContext()
+    const { Position, handleCameraChange, Markers, Zoom } = useMapContext()
     const map = useMap();
+    const prevMarkersRef = useRef<Set<string>>(new Set());
+    const isZoomingRef = useRef(false);
 
-    // Known bug: Incorrectly handles zoom if places are too far apart. Will fix this
     useEffect(() => {
-      if (map && Markers.length > 0) {
-        const bounds = new google.maps.LatLngBounds();
-        Markers.forEach(marker => {
-          bounds.extend(new google.maps.LatLng(marker.lat, marker.lng));
-        });
-  
-        const center = bounds.getCenter();
-        map.panTo(center);
-
-        map.setZoom(4); 
-  
-        const targetZoom = 6; 
-        const zoomInterval = setInterval(() => {
-          const currentZoom = map.getZoom();
-          if (currentZoom! < targetZoom) {
-            map.setZoom(currentZoom! + 1);
-          } else {
-            clearInterval(zoomInterval);
-          }
-        }, 80); // 80ms seems to be good
-      }
-    }, [Markers, map]);
+        if (map) {
+            const prevMarkers = prevMarkersRef.current;
+            const newMarkers = Markers.filter(marker => {
+                const markerId = `${marker.lat},${marker.lng}`;
+                if (!prevMarkers.has(markerId)) {
+                    prevMarkers.add(markerId);
+                    return true;
+                }
+                return false;
+            });
+            if (newMarkers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                newMarkers.forEach(marker => {
+                    if (marker.lat && marker.lng) {
+                        bounds.extend(new google.maps.LatLng(marker.lat, marker.lng));
+                    }
+                });
+                if (bounds.getNorthEast() !== bounds.getSouthWest()) {
+                    map.fitBounds(bounds)
+                    if (Zoom && !isZoomingRef.current) {
+                        isZoomingRef.current = true;
+                        google.maps.event.addListenerOnce(map, 'boundsChanged', () => {
+                            map.setZoom(Zoom);
+                            isZoomingRef.current = false;
+                        });
+                    }
+                }
+            }
+        }
+    }, [Markers, map, Zoom]);
 
   return (
       <div className="w-full h-full rounded-lg px-3 md:px-0 overflow-hidden">

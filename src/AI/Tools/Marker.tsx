@@ -8,11 +8,12 @@ const MapsKey = process.env.NEXT_PUBLIC_GMAP_API!;
 const markerSchema = z.object({
   address: z.union([
     z.string().describe("The address you want to place a marker on"),
-    z.array(z.string()).describe('A list of addresses you want to place markers on')
-  ])
+    z.array(z.string()).describe('A list of addresses you want to place markers on. Pass in all addresses in 1 array')
+  ]),
+  RemovePrevMarkers: z.boolean().optional().describe('If you would like to remove all previously placed markers, pass in true here'),
+  ZoomLevel: z.number().describe('Pass a number into here that corresponds with the addresses. 5 would be continent level, 7 would be small country / state level, and 12 is city level. Anything in between can also be passed')
 });
 
-// Function to fetch a single coordinate
 export const fetchSingleCoordinate = async (singleAddress: string): Promise<{ lat: number, lng: number }> => {
   const encodedAddress = encodeURIComponent(singleAddress);
   const geoCodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${MapsKey}`;
@@ -25,7 +26,8 @@ export const fetchSingleCoordinate = async (singleAddress: string): Promise<{ la
   return coordinates;
 };
 
-const fetchCoordinates = async (input: z.infer<typeof markerSchema>): Promise<{ lat: number; lng: number }[]> => {
+// Function to fetch coordinates for multiple addresses
+const fetchCoordinates = async (input: { address: string | string[] }): Promise<{ lat: number; lng: number }[]> => {
   const { address } = input;
 
   if (typeof address === "string") {
@@ -42,7 +44,7 @@ export const markerTool = new DynamicStructuredTool({
   description: 
     `A tool for placing markers on the map, given a specific address, which includes Street, City, State, and Country. 
     If you want to show a user a location, use this tool by passing in the address of the location. 
-    You can also place multiple markers by passing in an array of addresses. The addresses should also be in Street, City, State, and Country format in an array
+    You can also place multiple markers by passing in an array of addresses. Do not call this tool multiple times in 1 go. Instead, pass in an array for all the locations you would like to show.
     Always say something after using the tool like: "If you have any other questions please let me know"`,
   schema: markerSchema,
   func: async (input, _config) => {
@@ -50,9 +52,16 @@ export const markerTool = new DynamicStructuredTool({
     if (typeof addresses === 'string') {
       addresses = [addresses];
     }
-    
+
     const markerCoordinates = await fetchCoordinates({ address: addresses });
-    return JSON.stringify(markerCoordinates, null, 2);
+
+    const result = {
+      coordinates: markerCoordinates,
+      removePrevMarkers: input.RemovePrevMarkers ?? false,
+      zoomLevel: input.ZoomLevel ?? 12
+    };
+
+    return JSON.stringify(result, null, 2);
   }
 });
 

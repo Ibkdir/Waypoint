@@ -12,7 +12,7 @@ export const ThemeSwitch = () => {
     useEffect(() => setMounted(true), [])
 
     if (!Mounted) {
-        return <Button size="icon" className="animate-pulse" disabled={true}></Button>
+        return <Button size="icon" className="bg-inherit"></Button>
     }
 
     if (resolvedTheme == 'dark') {

@@ -17,7 +17,7 @@ const Chat = () => {
     const [Elements, setElements] = useState<React.JSX.Element[]>([]);
     const [IsLoading, setIsLoading] = useState(false)
 
-    const { addMarker } = useMapContext()
+    const { addMarker, removeMarkers, setNewZoom  } = useMapContext()
     const messageRef = useRef<HTMLDivElement | null>(null)
     const ButtonIsDisabled = IsLoading || !UserInput
 
@@ -59,10 +59,20 @@ const Chat = () => {
             if (lastEvent.useAgent?.toolCall) {
                 const toolRes = lastEvent.useAgent.toolCall;
                 if (toolRes.name === 'markerTool') {
-                    const coordinates = lastEvent.useTools?.toolResult
+                    const { coordinates, removePrevMarkers, zoomLevel  } = lastEvent.useTools!.toolResult!
+
+                    if (removePrevMarkers) {
+                        removeMarkers(removePrevMarkers)
+                    }
+
                     if (coordinates) {
                         addMarker(coordinates);
                     }
+
+                    if (zoomLevel) {
+                        setNewZoom(zoomLevel)
+                    }
+
                 }
                 const toolResString = JSON.stringify(toolRes, null, 2);
                 setHistory(prevHistory => [
@@ -132,7 +142,13 @@ interface LastEvent {
         results?: string
         toolCall?: { name: string, parameters: Record<string, unknown>; }
     },
-    useTools?: { toolResult?: {lat: number, lng: number}[] }
+    useTools?: { 
+        toolResult?: {
+            coordinates: { lat: number, lng: number }[];
+            removePrevMarkers: boolean;
+            zoomLevel: number;
+          }
+    }
 }
 interface AgentResponse {
     lastEvent: Promise<LastEvent>;
