@@ -18,7 +18,7 @@ export default function HomePage() {
         <Navbar />
         <div className="flex flex-col-reverse md:h-[42rem] md:px-10 md:pt-6 md:flex-row">
           <Chat />
-          <div className="h-[40vh] w-auto md:h-auto md:w-1/2 md:mb-2 md:ml-7">
+          <div className="h-[35vh] w-auto md:h-auto md:w-1/2 md:mb-2 md:ml-7">
              <DynamicGoogleMapComponent />
           </div>     
         </div>

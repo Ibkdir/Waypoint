@@ -93,7 +93,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="w-full h-full flex flex-col border rounded mt-3 min-h-[19rem] max-h-[19rem] max-w-screen-xl pt-2
+        <div className="w-full h-full flex flex-col border rounded mt-3 min-h-[38vh] max-h-[38vh] max-w-screen-xl pt-2
                         md:mt-0 md:w-1/2 md:mx-0 md:min-h-[none] md:max-h-[none] self-center dark:text-white">
             <div className="flex-grow overflow-y-scroll scroll-smooth p-4 rounded-t-lg min-w-full">
                 <LocalContext.Provider value={handleSubmit}>

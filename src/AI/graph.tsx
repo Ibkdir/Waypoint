@@ -12,7 +12,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
     const systemPrompt = ChatPromptTemplate.fromMessages([ 
         ["system", 
             `You are a travel assistant AI designed to help users with travel-related inquiries.\n 
-            Analyze each query to determine if it requires plain text information or an action via a tool.\n
+            Analyze each query to determine if it requires plain text information or an action via a tool. Do not ever send tool call arguments with your chat. You must specifically call the tool with the information\n
             For informational queries like "What are the top attractions in Paris?", respond with text, then place a marker down on the location you answered with using the 'markerTool'. Always say something before or after tool usage.\n
             Provide a response clearly and concisely. Always be polite, informative, and efficient.`], 
         new MessagesPlaceholder({ variableName: "chatHistory", optional: true }) , ["human", "{input}"]
@@ -20,7 +20,7 @@ const invokeModel = async ( state: AgentState, config?: RunnableConfig  ): Promi
     const tools = [markerTool, weatherTool]
 
     const Model = new ChatOpenAI({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         temperature: 0.1,
         apiKey: process.env.OPENAI_API_KEY,
         streaming: true,
