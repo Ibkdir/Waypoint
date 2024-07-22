@@ -16,7 +16,7 @@ const weatherIcon = (WeatherCode: number) => {
   }
 }
 
-export const WeatherCard = ({ addressString, currentTime, temp, wind_speed, humidity, weather, }: {
+const WeatherCard = ({ addressString, currentTime, temp, wind_speed, humidity, weather, }: {
   addressString: string; currentTime: string; temp: number; wind_speed: number; humidity: number; weather: WeatherData[]; }) => {
   const { id, description } = weather[0]!;
   const descriptionUpper = description.charAt(0).toUpperCase() + description.slice(1);
@@ -93,3 +93,5 @@ interface WeatherData {
   description: string;
   icon: string;
 }
+
+export default WeatherCard

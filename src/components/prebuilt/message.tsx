@@ -19,8 +19,8 @@ const CustomMarkdown = ({ content }: { content: string }) => (
 
 export function AIMessageText(props: MessageTextProps) {
   return (
-    <div className="flex mr-auto w-fit max-w-[700px] bg-gray-200 rounded-md px-2 py-1 mt-3">
-      <div className="text-normal text-gray-800 text-left break-words">
+    <div className="flex mr-auto w-fit max-w-[700px] bg-gray-200 dark:bg-zinc-800 rounded-md px-2 py-1 mt-3">
+      <div className="text-normal text-gray-800 dark:text-white text-left break-words">
         <CustomMarkdown content={props.content} />
       </div>
     </div>

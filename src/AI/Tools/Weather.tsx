@@ -3,7 +3,6 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { fetchSingleCoordinate } from "./Marker";
 import { createRunnableUI } from "~/utils/server";
-import { LoadingWeatherCard, WeatherCard } from "~/components/prebuilt/WeatherComponent";
 import { z } from "zod";
 
 const OpenWeatherKey = process.env.OPENWEATHER_API_KEY
@@ -21,27 +20,26 @@ const fetchWeather = async (address: z.infer<typeof weatherSchema>) => {
     const weatherURL = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&appid=${OpenWeatherKey}`;
     const weatherRes = await fetch(weatherURL);
     const weatherData: WeatherData = await weatherRes.json();
-    let currentTime = new Date().toLocaleTimeString();
-    currentTime = convertToMilitaryTime(currentTime)
-    const { temp, wind_speed, humidity, weather } = weatherData.current
+
+    let unixTime = weatherData.minutely[0]?.dt;
+
+    let currentTime;
+    if (unixTime === undefined) {
+      currentTime = "Time not found"
+    } else {
+      unixTime += weatherData.timezone_offset;
+
+      const date = new Date(unixTime * 1000);
+      const hours = String(date.getUTCHours()).padStart(2, '0');
+      const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+      currentTime = `${hours}:${minutes}:${seconds}`;
+    }
+
+
+    const { temp, wind_speed, humidity, weather,  } = weatherData.current
     return { addressString, currentTime, temp, wind_speed, humidity, weather }
 };
-
-const convertToMilitaryTime = (time: string) => {
-    const [timePart, modifier] = time.split(' ');
-    let [hours, minutes] = timePart!.split(':');
-    let hoursNumber = parseInt(hours!, 10);
-    
-    if (modifier === 'PM' && hoursNumber !== 12) {
-      hoursNumber += 12;
-    } else if (modifier === 'AM' && hoursNumber === 12) {
-      hoursNumber = 0;
-    }
-    
-    hours = String(hoursNumber).padStart(2, '0');
-    minutes = String(minutes).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
 
 export const weatherTool = new DynamicStructuredTool({
     name: 'weatherTool',
@@ -52,18 +50,10 @@ export const weatherTool = new DynamicStructuredTool({
          If only a city is provided, ask the user for the country, and for the USA, the state as well. Always say something after using the tool like: "If you have any other questions please let me know"`,
     schema: weatherSchema,
     func: async (input, config) => {
-        const stream = await createRunnableUI(config, <LoadingWeatherCard />)
-
-        try {
-          const weatherData = await fetchWeather(input);
-          stream.done(<WeatherCard {...weatherData} />);
-          return JSON.stringify(weatherData, null, 2);
-        } catch (error) {
-          console.error('Error fetching weather:', error);
-          stream.done(<div>Error fetching weather data. Please try again later.</div>);
-          return JSON.stringify({ error: "Error happened :" }, null, 2);
-        }
-    
+        const stream = await createRunnableUI(config)
+        const weatherData = await fetchWeather(input);
+        stream.done()
+        return JSON.stringify(weatherData, null, 2);
     }
 })
 interface Weather {
@@ -78,8 +68,11 @@ interface CurrentWeather {
   wind_speed: number;
   humidity: number;
   weather: Weather[];
+  
 }
 
 interface WeatherData {
+  timezone_offset: number,
   current: CurrentWeather;
+  minutely: { dt: number }[]
 }

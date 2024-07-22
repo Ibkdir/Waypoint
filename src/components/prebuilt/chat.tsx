@@ -9,6 +9,11 @@ import { useMapContext } from "./map/mapcontext"
 import { ChatCards } from "./chatCards"
 import { Button } from "../ui/button"
 import { ArrowCircleUp } from "@phosphor-icons/react"
+import dynamic from "next/dynamic"
+
+const DynamicWeatherCard = dynamic(() => import('./WeatherComponent'), {
+    ssr: false,
+  });
 
 const Chat = () => {
     const actions = useActions<typeof EndpointsContext>()
@@ -21,7 +26,6 @@ const Chat = () => {
     const { addMarker, removeMarkers, setNewZoom  } = useMapContext()
     const messageRef = useRef<HTMLDivElement | null>(null)
     const ButtonIsDisabled = IsLoading || !UserInput
-
     
     const handleSubmit = async (input: string) => {
         setIsLoading(true);
@@ -36,64 +40,68 @@ const Chat = () => {
         setElements(prevElements => [...prevElements, userMessageElement])
         setHistory(prevHistory => [...prevHistory, ['user', input]]);
     
-        try {
-            const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
-            const agentResponseElement = (
-                <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
-                    <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
-                        {res.ui}
-                    </div>
-                </div>
-            );
+        void (async () => {
+            try {
+                const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
+                setElements(prevElements => [...prevElements, res.ui]);
     
-            setElements(prevElements => [...prevElements, agentResponseElement]);
-            
-            const lastEvent = await res.lastEvent;
-    
-            if (lastEvent.useAgent?.results) {
-                setHistory(prevHistory => [
-                    ...prevHistory,
-                    ['assistant', lastEvent.useAgent?.results ?? '']
-                ]);
-            }
-            
-            if (lastEvent.useAgent?.toolCall) {
-                const toolRes = lastEvent.useAgent.toolCall;
-                if (toolRes.name === 'markerTool') {
-                    const { coordinates, removePrevMarkers, zoomLevel  } = lastEvent.useTools!.toolResult!
-
-                    if (removePrevMarkers) {
-                        removeMarkers(removePrevMarkers)
-                    }
-
-                    if (coordinates) {
-                        addMarker(coordinates);
-                    }
-
-                    if (zoomLevel) {
-                        setNewZoom(zoomLevel)
-                    }
-
+                const lastEvent = await res.lastEvent;
+                if (lastEvent.useAgent?.results) {
+                    setHistory(prevHistory => [
+                        ...prevHistory,
+                        ['assistant', lastEvent.useAgent?.results ?? '']
+                    ]);
                 }
-                const toolResString = JSON.stringify(toolRes, null, 2);
-                setHistory(prevHistory => [
-                    ...prevHistory,
-                    ['assistant', toolResString]
-                ]);
-            }
-            setIsLoading(false);
+                if (lastEvent.useAgent?.toolCall) {
+                    const toolRes = lastEvent.useAgent.toolCall;
+                    if (toolRes.name === 'markerTool') {
+                        const { coordinates, removePrevMarkers, zoomLevel  } = lastEvent.useTools!.toolResult!;
+                        if (removePrevMarkers) {
+                            removeMarkers(removePrevMarkers);
+                        }
+                        if (coordinates) {
+                            addMarker(coordinates);
+                        }
+                        if (zoomLevel) {
+                            setNewZoom(zoomLevel);
+                        }
+                    }
+                    // Temporary Fix to weatherTool
+                    if (toolRes.name === 'weatherTool') {
+                        const data = lastEvent.useTools!.toolResult!;
 
-            if (messageRef.current) {
-                messageRef.current.scrollIntoView({ behavior: 'smooth' });
+                        const agentWeatherElement = (
+                        <div className="flex flex-col w-full gap-1 mt-auto" key={History.length + 1}>
+                            <div className="flex flex-col gap-1 w-full max-w-fit mr-auto py-3">
+                                <DynamicWeatherCard {...data}/>
+                            </div>
+                        </div>
+                        )
+
+                        setElements(prevElements => [...prevElements, agentWeatherElement])
+
+
+                    }
+                    const toolResString = JSON.stringify(toolRes, null, 2);
+                    setHistory(prevHistory => [
+                        ...prevHistory,
+                        ['assistant', toolResString]
+                    ]);
+                }
+                setIsLoading(false);
+    
+                if (messageRef.current) {
+                    messageRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error("Error during handleSubmit:", error);
+                setIsLoading(false);
             }
-        } catch (error) {
-            console.error("Error during handleSubmit:", error);
-            setIsLoading(false);
-        }
+        })();
     };
 
     return (
-        <div className="w-full h-full flex flex-col border rounded mt-3 min-h-[38vh] max-h-[38vh] max-w-screen-xl pt-2
+        <div className="w-full h-full flex flex-col border rounded mt-3 min-h-[37vh] max-h-[37vh] max-w-screen-xl pt-2
                         md:mt-0 md:w-1/2 md:mx-0 md:min-h-[none] md:max-h-[none] self-center dark:text-white">
             <div className="flex-grow overflow-y-scroll scroll-smooth p-4 rounded-t-lg min-w-full">
                 <LocalContext.Provider value={handleSubmit}>
@@ -139,6 +147,12 @@ const Chat = () => {
 
 // Interfaces
 
+interface WeatherData {
+    id: number;
+    main: string;
+    description: string;
+    icon: string;
+  }
 interface LastEvent {
     // Types from Graph
     useAgent?: {
@@ -150,6 +164,14 @@ interface LastEvent {
             coordinates: { lat: number, lng: number }[];
             removePrevMarkers: boolean;
             zoomLevel: number;
+          } &
+          {
+            addressString: string; 
+            currentTime: string; 
+            temp: number; 
+            wind_speed: number; 
+            humidity: number; 
+            weather: WeatherData[];
           }
     }
 }

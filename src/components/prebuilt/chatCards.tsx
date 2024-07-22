@@ -47,7 +47,7 @@ export const ChatCards: React.FC<ChatCardsProps> = ({ onCardClick }) => {
     return (
         <div className="flex px-3 items-center sticky self-center md:pb-3 pb-7">
             {selectedPrompts.map((item, index) => (
-                <div key={index} onClick={() => onCardClick(item.prompt)} className="flex text-[8px] border rounded-sm px-3 text-center mx-2 h-[5.5rem] w-[6.2rem] items-center justify-center flex-col hover:bg-gray-100">
+                <div key={index} onClick={() => onCardClick(item.prompt)} className="flex text-[8px] border rounded-md px-3 text-center mx-2 h-[5.5rem] w-[6.2rem] items-center justify-center flex-col hover:bg-gray-100 dark:hover:bg-zinc-800">
                     {item.icon}
                     <p className="ml-2">{item.prompt}</p>
                 </div>
