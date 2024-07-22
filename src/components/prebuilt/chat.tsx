@@ -9,6 +9,7 @@ import { useMapContext } from "./map/mapcontext"
 import { ChatCards } from "./chatCards"
 import { Button } from "../ui/button"
 import { ArrowCircleUp } from "@phosphor-icons/react"
+import { LoadingWeatherCard } from "./WeatherComponent"
 import dynamic from "next/dynamic"
 
 const DynamicWeatherCard = dynamic(() => import('./WeatherComponent'), {
@@ -43,7 +44,14 @@ const Chat = () => {
         void (async () => {
             try {
                 const res = await actions.agent({ input, chatHistory: History }) as AgentResponse;
-                setElements(prevElements => [...prevElements, res.ui]);
+
+                const agentRes = (
+                    <div className='mr-[10vw]'>
+                        {res.ui}
+                    </div>
+                )
+
+                setElements(prevElements => [...prevElements, agentRes]);
     
                 const lastEvent = await res.lastEvent;
                 if (lastEvent.useAgent?.results) {
@@ -68,6 +76,7 @@ const Chat = () => {
                     }
                     // Temporary Fix to weatherTool
                     if (toolRes.name === 'weatherTool') {
+                        setElements(prevElements => [...prevElements, <LoadingWeatherCard />])
                         const data = lastEvent.useTools!.toolResult!;
 
                         const agentWeatherElement = (
