@@ -76,7 +76,6 @@ const Chat = () => {
                     }
                     // Temporary Fix to weatherTool
                     if (toolRes.name === 'weatherTool') {
-                        setElements(prevElements => [...prevElements, <LoadingWeatherCard />])
                         const data = lastEvent.useTools!.toolResult!;
 
                         const agentWeatherElement = (
