@@ -9,7 +9,6 @@ import { useMapContext } from "./map/mapcontext"
 import { ChatCards } from "./chatCards"
 import { Button } from "../ui/button"
 import { ArrowCircleUp } from "@phosphor-icons/react"
-import { LoadingWeatherCard } from "./WeatherComponent"
 import dynamic from "next/dynamic"
 
 const DynamicWeatherCard = dynamic(() => import('./WeatherComponent'), {
@@ -109,8 +108,8 @@ const Chat = () => {
     };
 
     return (
-        <div className="w-full h-full flex flex-col border rounded mt-3 min-h-[37vh] max-h-[37vh] max-w-screen-xl pt-2
-                        md:mt-0 md:w-1/2 md:mx-0 md:min-h-[none] md:max-h-[none] self-center dark:text-white">
+        <div className="w-full h-full flex flex-col mt-3 min-h-[37vh] max-h-[37vh] max-w-screen-xl pt-2
+                        md:mt-0 md:w-1/2 md:mx-0 md:min-h-[none] md:max-h-[none] self-center dark:text-white border rounded">
             <div className="flex-grow overflow-y-scroll scroll-smooth p-4 rounded-t-lg min-w-full">
                 <LocalContext.Provider value={handleSubmit}>
                     <div className="flex flex-col w-full gap-2">{Elements}</div>
@@ -128,9 +127,9 @@ const Chat = () => {
                     await handleSubmit(UserInput);
                 }}
             >
-                <p className="font-medium mb-2">Where would you like to go?</p>
+                <p className="font-medium mb-2 text-md">Where would you like to go?</p>
 
-                <div className="flex border rounded-md border-gray-300 items-center bg-inherit">
+                <div className="flex border rounded-md border-gray-300 items-center bg-inherit text-sm">
                     <input
                     type="text"
                     placeholder="Start typing..."

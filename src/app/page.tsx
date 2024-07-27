@@ -23,6 +23,7 @@ export default function HomePage() {
           </div>     
         </div>
       </MapProvider>
+      <div className="dark:text-gray-500 text-gray-400 text-[9px] pl-2 pt-1 md:pl-12 md:pt-2">Note: The chat may occasionally experience issues.</div>
     </main>
   );
 }
