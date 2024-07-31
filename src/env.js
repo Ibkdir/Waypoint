@@ -10,6 +10,7 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "test", "production"]),
     OPENAI_API_KEY: z.string(),
     OPENWEATHER_API_KEY: z.string(),
+    GMAP_API_KEY: z.string(),
   },
 
   /**
@@ -19,7 +20,6 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
-    NEXT_PUBLIC_GMAP_API: z.string(),
     NEXT_PUBLIC_MAP_ID: z.string(),
   },
 
@@ -31,8 +31,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY,
-
-    NEXT_PUBLIC_GMAP_API: process.env.NEXT_PUBLIC_GMAP_API,
+    GMAP_API_KEY: process.env.GMAP_API_KEY,
+    
+    
     NEXT_PUBLIC_MAP_ID: process.env.NEXT_PUBLIC_MAP_ID,
 
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,

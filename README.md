@@ -23,7 +23,7 @@ npm install
 Next, copy the .env.example file to .env and fill in your environment variables:
 
 ```
-NEXT_PUBLIC_GMAP_API='..'
+GMAP_API_KEY='..'
 NEXT_PUBLIC_MAP_ID='...'
 OPENAI_API_KEY='...'
 OPENWEATHER_API_KEY='...'

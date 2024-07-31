@@ -4,8 +4,6 @@ import MapProvider from "~/components/prebuilt/map/mapcontext";
 import LoadingMap from "~/components/prebuilt/loading";
 import dynamic from "next/dynamic";
 
-export const runtime = 'edge'
-
 const DynamicGoogleMapComponent = dynamic(() => import("~/components/prebuilt/map/map"), {
   loading: () => <LoadingMap />,
   ssr: false

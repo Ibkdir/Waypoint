@@ -2,7 +2,7 @@
 import { DynamicStructuredTool } from "@langchain/core/tools";
 import { z } from "zod";
 
-const MapsKey = process.env.NEXT_PUBLIC_GMAP_API!;
+const MapsKey = process.env.GMAP_API_KEY!;
 
 // Define the marker schema
 const markerSchema = z.object({
