@@ -66,11 +66,11 @@ const GoogleMapComponent = () => {
             const response = await fetch('/api/MapKey', {
                 method: 'GET',
             })
-            const data = await response.json()
+            const data = await response.json() as MapKeyResponse
             setMapsKey(data.APIKey)
         };
 
-        fetchApiKey();
+        void fetchApiKey();
     }, []);
 
     if (!MapsKey) {
@@ -91,3 +91,7 @@ const GoogleMapComponent = () => {
 }
 
 export default GoogleMapComponent;
+
+interface MapKeyResponse {
+    APIKey: string
+}
